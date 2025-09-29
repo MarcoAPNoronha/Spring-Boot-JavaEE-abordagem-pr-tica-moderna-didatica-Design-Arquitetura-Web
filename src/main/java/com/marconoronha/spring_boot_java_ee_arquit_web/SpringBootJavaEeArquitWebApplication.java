@@ -10,4 +10,8 @@ public class SpringBootJavaEeArquitWebApplication {
 		SpringApplication.run(SpringBootJavaEeArquitWebApplication.class, args);
 	}
 
+
 }
+
+//Testando GIT Inicial
+
