@@ -16,13 +16,15 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 
+       // Sem o @Entity porque não estamos usando o JPA
 @Data //Substitui todos os Getters e Setters
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "PERSON")
+@Table(name = "PERSON_DTO")
 @XmlRootElement //JSON é enviado por padrão, pra enviar XML precisa da annotation
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PersonDTO {
+
 
     @Id
     @Column(value = "ID")

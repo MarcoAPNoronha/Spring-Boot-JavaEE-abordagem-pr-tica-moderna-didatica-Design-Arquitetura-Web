@@ -14,7 +14,9 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 
-@Data //Substitui todos os Getters e Setters
+@Getter
+@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "PERSON")
@@ -57,6 +59,11 @@ public class Person {
     @Column(value = "EMAIL")
     @XmlElement
     private String email;
+
+
+
+    //-------------------------------------------------------
+
 
 
 }
