@@ -11,8 +11,8 @@ import java.util.List;
 
 
 @Repository
-public interface PersonRepository extends ListCrudRepository<Person, Long>, //Tipo do objeto da entidade e tipo do ID
-                                          PagingAndSortingRepository<Person, Long>,
+public interface PersonRepository extends ListCrudRepository<Person, Long>, //Tipo do objeto da entidade e tipo do ID, não retorna Paginable
+                                          PagingAndSortingRepository<Person, Long>, //Retorna Pageable
                                           PersonCustomRepository {
 
     @Query(value = "SELECT * FROM PERSON where FIRST_NAME= :firstName ORDER BY USER_NAME ASC")

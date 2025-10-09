@@ -1,5 +1,9 @@
 package com.marconoronha.spring_boot_java_ee_arquit_web.exception;
 
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 public class PersonSaveOrUpdateByIdFailedException extends RuntimeException {
 
     private String message;

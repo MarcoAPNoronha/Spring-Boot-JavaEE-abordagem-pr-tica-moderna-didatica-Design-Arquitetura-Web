@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -52,5 +53,29 @@ public class PersonServiceImpl implements PersonService {
         } else {
             return false;
         }
+    }
+
+
+    @Override
+    public List<Person> findPersonByFirstNameOrderByUserNameAsc(String firstName) {
+        return personRepository.findPersonByFirstNameOrderByUserNameAsc(firstName);
+    }
+
+
+    @Override
+    public List<Person> findPersonByLastNameOrderByUserNameAsc(String lastName) {
+        return personRepository.findPersonByLastNameOrderByUserNameAsc(lastName);
+    }
+
+
+    @Override
+    public List<Person> findPersonByLastNameOrderByFirstNameAsc(String lastName) {
+        return personRepository.findPersonByLastNameOrderByFirstNameAsc(lastName);
+    }
+
+
+    @Override
+    public List<Person> findPersonByFirstNameAndLastNameOrderByUserNameAsc(String firstName, String lastName) {
+        return personRepository.findPersonByFirstNameAndLastNameOrderByUserNameAsc(firstName, lastName);
     }
 }

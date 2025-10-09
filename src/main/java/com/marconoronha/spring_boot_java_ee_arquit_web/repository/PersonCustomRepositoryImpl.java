@@ -1,6 +1,7 @@
 package com.marconoronha.spring_boot_java_ee_arquit_web.repository;
 
 import com.marconoronha.spring_boot_java_ee_arquit_web.entity.Person;
+import com.marconoronha.spring_boot_java_ee_arquit_web.exception.PersonSaveOrUpdateByIdFailedException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -28,14 +29,14 @@ public class PersonCustomRepositoryImpl implements PersonCustomRepository{
             jdbcTemplate.update(preparedStatement, person.getId(), person.getFirstName(), person.getLastName(),
                     person.getUserName(), person.getPassword(), person.getEmail()); 
             if(findById(person.getId())==null){
-                //throw new PersonSaveOrUpdateByIdFailedException("Person ID = "+person.getId()+" did not previously exist at the Database but was not inserted !");
+                throw new PersonSaveOrUpdateByIdFailedException("Person ID = "+person.getId()+" did not previously exist at the Database but was not inserted !");
             }
-        } else{
+        } else {
             String preparedStatement = "UPDATE PERSON SET FIRST_NAME=?, LAST_NAME=?, USER_NAME=?, PASSWORD=?, EMAIL=? WHERE ID=?";
             jdbcTemplate.update(preparedStatement, person.getFirstName(), person.getLastName(), person.getUserName(),
                     person.getPassword(), person.getEmail(), person.getId());
             if(!Objects.equals(findById(person.getId()),person)){
-                //throw new PersonSaveOrUpdateByIdFailedException("Person ID = "+person.getId()+" previously existed at the Database but was not updated !");
+                throw new PersonSaveOrUpdateByIdFailedException("Person ID = "+person.getId()+" previously existed at the Database but was not updated !");
             }
         }
         return findById(person.getId());
