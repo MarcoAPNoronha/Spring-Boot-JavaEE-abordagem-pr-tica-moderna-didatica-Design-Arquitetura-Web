@@ -23,7 +23,7 @@ import org.springframework.data.relational.core.mapping.Table;
 @Table(name = "PERSON_DTO")
 @XmlRootElement //JSON é enviado por padrão, pra enviar XML precisa da annotation
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PersonDTO {
+public class PersonDTO implements ObjectDTO {
 
 
     @Id

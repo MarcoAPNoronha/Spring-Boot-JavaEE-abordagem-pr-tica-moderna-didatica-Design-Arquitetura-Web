@@ -1,8 +1,15 @@
 package com.marconoronha.spring_boot_java_ee_arquit_web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.marconoronha.spring_boot_java_ee_arquit_web.dto.PersonDTO;
 import com.marconoronha.spring_boot_java_ee_arquit_web.entity.Person;
 import com.marconoronha.spring_boot_java_ee_arquit_web.exception.PersonDeleteByIdFailedException;
+import com.marconoronha.spring_boot_java_ee_arquit_web.exception.PersonSaveOrUpdateByIdFailedException;
+import com.marconoronha.spring_boot_java_ee_arquit_web.mapper.DTOToObjectMapper;
 import com.marconoronha.spring_boot_java_ee_arquit_web.service.PersonService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.annotation.QueryAnnotation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +31,24 @@ public class PersonController {
     //Como só tem 1 implementação, não tem problema
    // @Autowired
     private PersonService personService;
+    private final DTOToObjectMapper<PersonDTO, Person> myPersonMapper;
+    //private final ObjectMapper myObjectMapper;
+    //private final ObjectMapper myXmlMapper;
 
-    public PersonController(PersonService personService) {
+
+    //1. DTOToObjectMapper é implementada por 2 classes, ela usa o @Priority(PriorityOrdered.HIGHEST_PRECEDENCE) para definir qual CLASSE será usada
+    //2. Se o nome do parâmetro for igual o nome do Bean, ele já identificaria
+    //3. Quando há ambiguidade no tipo do parâmetro, ele procura pelo @Primary (nível de MÉTOD)
+    //4. @Qualifier("xmlMapper") Quando há ambiguidade no tipo do parâmetro, ele procura o MÉTOD com o nome do qualifier
+    public PersonController(PersonService personService,
+                            DTOToObjectMapper<PersonDTO, Person> myPersonMapper,
+                            ObjectMapper myObjectMapper,
+                            @Qualifier("xmlMapper")ObjectMapper myXmlMapper
+    ){
         this.personService = personService;
+        this.myPersonMapper = myPersonMapper;
+        //this.myObjectMapper = myObjectMapper;
+        //this.myXmlMapper = myXmlMapper;
     }
 
     /* --------------------------------------------------------------------
@@ -81,8 +103,8 @@ public class PersonController {
     }
 
 
-    @RequestMapping(method = RequestMethod.HEAD, value = "/${/id}") //Anotação genérica, quando não tem tipo específico
-    ResponseEntity<Person> existsById(@PathVariable("id")Long personId){
+    @RequestMapping(method = RequestMethod.HEAD, value = "/{id}") //Anotação genérica, quando não tem tipo específico
+    ResponseEntity<Person> existsById(@PathVariable("id") Long personId){
         Boolean result = personService.existsById(personId);
         if(result){
             return ResponseEntity.ok().build();
@@ -119,23 +141,33 @@ public class PersonController {
             @RequestParam(defaultValue = "5") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "true") Boolean asceding
-    )
-    {
+    ){
         Sort sort = asceding ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return ResponseEntity.ok(personService.findAll(pageable));
     }
 
 
-
-    void saveOrUpdate(){
-
+    @ExceptionHandler(PersonSaveOrUpdateByIdFailedException.class)
+    ResponseEntity<String> personSaveOrUpdateByIdFailedExceptionHandler(PersonSaveOrUpdateByIdFailedException e){
+        return ResponseEntity.status(400).body(e.getMessage());
     }
 
 
     @ExceptionHandler(PersonDeleteByIdFailedException.class)
     ResponseEntity<String> personDeleteByIdFailedExceptionHandler(PersonDeleteByIdFailedException e){
         return ResponseEntity.status(500).body(e.getMessage());
+    }
+
+
+    @PutMapping(value = "/{id}",
+                consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+                produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    ResponseEntity<Person> SaveOrUpdateBy(@PathVariable("id") Long personId, @Valid @RequestBody PersonDTO personDTO){
+        Person personToBESavedOrUpdated = myPersonMapper.objectDTOToObject(personDTO);
+        personToBESavedOrUpdated.setId(personId); //sobrescreve o ID enviado no RequestBody JSON pelo ID pelo ID enviado no PathVariable;
+        Person result = personService.saveOrUpdate(personToBESavedOrUpdated);
+        return ResponseEntity.ok(result);
     }
 
 }
