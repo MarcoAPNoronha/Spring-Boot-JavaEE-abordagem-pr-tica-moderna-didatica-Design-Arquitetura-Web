@@ -18,7 +18,7 @@ public class FooPersonMapper implements DTOToObjectMapper<PersonDTO, Person> {
 
     public FooPersonMapper(ModelMapper modelMapper){
         this.modelMapper = modelMapper;
-        log.warning("FooPerson mapper, with highest-precedence order, loaded at application context");
+        log.warning("FooPerson mapper, with lowest-precedence order, loaded at application context");
     }
 
     @Override
