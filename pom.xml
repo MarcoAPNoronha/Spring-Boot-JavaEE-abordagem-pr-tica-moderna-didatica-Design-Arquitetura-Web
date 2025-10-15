@@ -100,11 +100,7 @@
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>4.0.2</version>
         </dependency>
-        <dependency>
-            <groupId>com.marconoronha</groupId>
-            <artifactId>spring-boot-java-ee-arquit-web</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+
     </dependencies>
 
 	<build>
